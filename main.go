@@ -3,9 +3,8 @@ package main
 import (
 	"log"
 	"net"
-	// "reflect"
+	"github.com/mendoncas/godis/components"
 )
-
 
 func main() {
   cache := make(map[string]string)
@@ -33,17 +32,24 @@ func connectionListenLoop(conn net.Conn, cache *map[string]string) {
       conn.Close()
       return
     }
-    log.Print("Received: ", string(received), " from ", conn.RemoteAddr())
-    command := string(received[:3])
-    switch command {
+    handleMessage(string(received), conn, cache)
+  }
+}
+
+func handleMessage(message string, conn net.Conn, cache *map[string]string) {
+    packet := components.Packet{}
+    packet.FromString(string(message))
+    switch packet.Command {
       case "PNG":
         conn.Write([]byte("pong")) 
       case "ADD":
-        conn.Write([]byte("adding!")) 
+        (*cache)[packet.Key] = packet.Value
+      case "GET":
+        conn.Write([]byte((*cache)[packet.Key])) 
+      case "DEL":
+        delete(*cache, packet.Key)
       default:
-        log.Print("Unknown command: ", command)
+        log.Print("Unknown command: ", packet.Command)
     }
-    var st string = string(received[:])
-    log.Print(len(st))
-  }
+    log.Print((*cache))
 }

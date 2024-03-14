@@ -1,3 +1,3 @@
-module github.com/mendoncas/my-own-redis
+module github.com/mendoncas/godis
 
-go 1.21.0
+go 1.21.7
