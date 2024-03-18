@@ -22,6 +22,18 @@ func (p *Packet) ToString() string {
   return  p.Command +  strPayloadSize + p.payload
 }
 
+func Generate (command string, key string, value string) *Packet {
+  payload := key + value
+  return &Packet{
+    Command: command,
+    Key: key,
+    Value: value,
+    payload: payload,
+    payloadSize: len(payload),
+    keySize: len(key),
+  }
+}
+
 func (p *Packet) FromString(s string) {
   p.Command = s[0:3]
   p.payloadSize, _ = strconv.Atoi(s[3:7])

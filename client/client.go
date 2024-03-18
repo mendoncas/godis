@@ -2,9 +2,11 @@ package main
 
 import (
 	"log"
-  "time"
+	"math/rand"
 	"net"
-  "math/rand"
+	"time"
+	"github.com/mendoncas/godis/components"
+  "github.com/thanhpk/randstr"
 )
 
 func main(){
@@ -33,11 +35,12 @@ func getConnection() (net.Conn, error) {
 }
 
 func pingServer(conn net.Conn){
-  commands := [6]string{
-    "ADD000402OITESTE", "GET000002OI", "DEL000002OI", 
-    "ADD000605FRUTABANANA", "GET000005FRUTA", "DEL000005FRUTA",}
+  commands := [3]string{"DEL", "ADD", "GET"}
+
   for {
-    conn.Write([]byte(commands[rand.Intn(len(commands))]))
+    packet := components.Generate(commands[rand.Intn(3)], randstr.String(10), randstr.String(10))
+    log.Print(randstr.String(10))
+    conn.Write([]byte(packet.ToString()))
     time.Sleep(1 * time.Second)
   }
 }
